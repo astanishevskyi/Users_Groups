@@ -43,6 +43,31 @@ def group_list(request):
         return Response(group_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET', 'PUT', 'DELETE'])
+def group_actions(request, pk):
+    try:
+        some_group = Group.objects.get(pk=pk)
+    except Group.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        group_serializer = GroupSerializer(some_group, context={'request': request})
+        return Response(group_serializer.data)
+
+    elif request.method == 'PUT':
+        group_serializer = GroupSerializer(some_group, data=request.data, context={'request': request})
+
+        if group_serializer.is_valid():
+            group_serializer.save()
+            return Response(group_serializer.data)
+
+        return Response(group_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        some_group.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 @api_view(['GET', 'POST'])
 def user_list(request):
     if request.method == 'GET':

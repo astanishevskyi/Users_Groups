@@ -21,5 +21,6 @@ from users_groups import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api/groups/$', views.group_list),
+    url(r'^api/groups/(?P<pk>[0-9]+)$', views.group_actions),
     url(r'^api/users/$', views.user_list),
 ]
