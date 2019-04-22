@@ -102,3 +102,28 @@ def user_list(request):
             user_serializer.save()
             return Response(user_serializer.data, status=status.HTTP_201_CREATED)
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def user_actions(request, pk):
+    try:
+        some_user = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        user_serializer = UserSerializer(some_user, context={'request': request})
+        return Response(user_serializer.data)
+
+    elif request.method == 'PUT':
+        user_serializer = UserSerializer(some_user, data=request.data, context={'request': request})
+
+        if user_serializer.is_valid():
+            user_serializer.save()
+            return Response(user_serializer.data)
+
+        return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        some_user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
