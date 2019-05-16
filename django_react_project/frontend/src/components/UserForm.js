@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import '../styles/UserGroupForm.css'
+import axios from 'axios'
+import PropTypes from 'prop-types'
 
 class UserForm extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             username: '',
             group: ''
@@ -12,16 +14,17 @@ class UserForm extends Component {
     render() {
     return (
       <div>
-          <a className="button" href="#userPopUp">Add User</a>
+          <a className="button" href={'#userPopUp' + (this.props.mode === 'update' ? this.props.existingUsername: '')}>{this.props.buttonName}</a>
 
-          <div id="userPopUp" className="overlay">
+          <div id={'userPopUp' + (this.props.mode === 'update' ? this.props.existingUsername: '')} className="overlay">
               <div className="popup">
                   <h2>Here i am</h2>
                   <a className="close" href="#">&times;</a>
                   <div className="content">
                       <form onSubmit={this.handleSubmit}>
-                          <input className="form-control form-control-lg" type="text" placeholder=".form-control-lg" value={this.state.username} onChange={this.handleChangeUsername} />
-                          <input className="form-control form-control-lg" type="text" placeholder=".form-control-lg" value={this.state.group} onChange={this.handleChangeGroup} />
+                          <input required className="form-control form-control-lg" type="text" placeholder="username" value={this.state.username} onChange={this.handleChangeUsername} />
+                          <input required className="form-control form-control-lg" type="text" placeholder="group id" value={this.state.group} onChange={this.handleChangeGroup} />
+                          <p>{this.props.mode}</p>
                           <button type="submit">Submit</button>
                       </form>
                   </div>
@@ -31,10 +34,48 @@ class UserForm extends Component {
     );
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = (e) =>{
+      e.preventDefault()
+      if (this.props.mode === 'insert'){
+          axios.post('http://127.0.0.1:8000/api/users/', {
+              username: this.state.username,
+              group: this.state.group
+          }).then(() => {
+            this.props.action()
+          })
+      } else {
+          axios.put(`http://127.0.0.1:8000/api/users/${this.props.user_id}`, {
+          username: this.state.username,
+          group: this.state.group
+            }).then(() => {
+            this.props.action()
+            })
+      }
+  }
+
+  componentDidMount(props) {
+        if (this.props.mode === 'update') {
+            console.log(1)
+            this.setState({username: this.props.existingUsername})
+            this.setState({group: this.props.existingGroup})
+            console.log(this.props.existingUsername)
+        } else {
+            console.log(2)
+
+
+        }
+  }
+
+  handleUpdate = (e) =>{
       e.preventDefault()
       console.log(this.state.username)
       console.log(this.state.group)
+      axios.put(`http://127.0.0.1:8000/api/users/${this.props.user_id}`, {
+          username: this.state.username,
+          group: this.state.group
+      }).then(() => {
+        this.props.action()
+      })
   }
 
   handleChangeUsername = (e) =>{
@@ -46,5 +87,9 @@ class UserForm extends Component {
   }
 
 }
+
+// UserForm.propTypes = {
+//     existingUsername: PropTypes.string
+// }
 
 export default UserForm;

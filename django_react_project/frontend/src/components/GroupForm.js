@@ -20,8 +20,8 @@ class GroupForm extends Component {
                   <a className="close" href="#">&times;</a>
                   <div className="content">
                       <form onSubmit={this.handleSubmit}>
-                          <input className="form-control form-control-lg" type="text" placeholder=".form-control-lg" value={this.state.name} onChange={this.handleChangeName} />
-                          <input className="form-control form-control-lg" type="text" placeholder=".form-control-lg" value={this.state.description} onChange={this.handleChangeDescription} />
+                          <input className="form-control form-control-lg" type="text" placeholder="name" value={this.state.name} onChange={this.handleChangeName} />
+                          <input className="form-control form-control-lg" type="text" placeholder="description" value={this.state.description} onChange={this.handleChangeDescription} />
                           <button type="submit">Submit</button>
                       </form>
                   </div>

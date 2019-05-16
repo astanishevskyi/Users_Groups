@@ -16,16 +16,19 @@ class GroupList extends Component {
     }
 }
 
+
 export default GroupList;
 
-componentDidMount(){
+
+componentDidMount() {
     var self = this;
     groupService.getGroups().then(function (result) {
         self.setState({groups: result.data, nextPageURL: result.nextlink})
     });
 }
 
-handleDelete(e, pk){
+
+handleDelete(e, pk) {
     var self = this;
     groupService.deleteGroup({pk : pk}).then(() => {
         var newArr = self.state.groups.filter(function (obj) {
@@ -51,12 +54,24 @@ render(){
                     <th>#</th>
                     <th>Name</th>
                     <th>Description</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-
+                    {this.state.groups.map(c =>
+                        <tr key={c.pk}>
+                            <td>{c.pk}</td>
+                            <td>{c.name}</td>
+                            <td>{c.description}</td>
+                            <td>
+                                <button onClick={(e)=> this.handleDelete(e, c.pk)}>Delete</button>
+                                <a href={"/group/" + c.pk}>Update</a>
+                            </td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
+            <button className='btn btn-primary' onClick={this.nextPage}>Next</button>
         </div>
     )
 }
